@@ -9,5 +9,18 @@
 - Andy Fang
 '''
 
-import csv, requests, gspread
+import csv
 
+# with open('data.csv') as f:
+#     reader = csv.reader(f)
+#     data = [row[0] for row in reader]
+#
+# print(data[0])
+
+data = csv.reader(open('data.csv', 'rt'), delimiter=' ')
+
+row = []
+for rows in data:
+    row.append(rows)
+
+print(row[1])
