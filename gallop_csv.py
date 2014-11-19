@@ -64,9 +64,10 @@ class Data:
             # audience
             i += 1 # Index of the matching row to audience
 
-            if audience.lower() == device.lower():
+            if audience == device:
                 company = row[:self.occurences(row, '-')[0]].strip()
                 campaigner = row[self.occurences(row, '-')[0]:self.occurences(row, '-')[1]].strip(' -')
+
                 self.impressions += float(self.column['Impressions'][i - 1])
                 # total_dl += int(column['Total Downloads'])
                 self.spent += float(self.column['Amount Spent (USD)'][i - 1])
@@ -79,7 +80,12 @@ class Data:
 
         return list(tuple)
 
+    def get_impressions(self):
+        return self.device(self)
+
 if __name__ == "__main__":
 
     nyt = Data('gdata.csv')
-    print(nyt.device('IPHONE'))
+    print(nyt.device('IPHONE')[3])
+
+    print(nyt.get_impressions())
