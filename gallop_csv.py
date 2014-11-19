@@ -80,6 +80,7 @@ class Data:
 
             return list(tuple)
 
+if __name__ == "__main__":
 
-nyt = Data('gdata.csv')
-print(nyt.device('IPHONE'))
+    nyt = Data('gdata.csv')
+    print(nyt.device('IPHONE'))
