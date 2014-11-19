@@ -18,9 +18,9 @@ class Data:
 
     def __init__(self, file):
 
-        data = open(file)
+        self.data = open(file)
 
-        with data as f:
+        with self.data as f:
             reader = csv.DictReader(f)  # read rows into a dictionary format
             for row in reader: # read a row as {column1: value1, column2: value2,...}
                 for (k, v) in row.items():  # go over each column name and value
@@ -30,6 +30,8 @@ class Data:
         self.start_date = self.column['Start Date']
         self.end_date = self.column['End Date']
         self.reach = self.column['Reach']
+        self.action = self.column['Actions']
+
 
     def occurences(self, s, ch):
         """
@@ -58,13 +60,20 @@ class Data:
         self.impressions = 0
         self.total_dl = 0
         self.spent = 0
+        self.placement = []
+        self.actions = 0
+        self.starts = []
+        self.start_dates = []
 
         for row in self.campaign_name:
             audience = row[self.occurences(row, '-')[1]:self.occurences(row, '-')[2]].strip(' -') # filters by
-            # audience
-            i += 1 # Index of the matching row to audience
 
-            if audience == device:
+            if 'IPAD' not in row[self.occurences(row, '-')[2]:].strip('- ') and 'IPHONE' not in row[self.occurences(
+                    row, '-')[2]:].strip('- ') and 'ANDROID' not in row[self.occurences(row, '-')[2]:].strip('- '):
+                self.placement.append(row[self.occurences(row, '-')[2]:].strip('- '))
+
+            i += 1
+            if audience.lower() == device.lower():
                 company = row[:self.occurences(row, '-')[0]].strip()
                 campaigner = row[self.occurences(row, '-')[0]:self.occurences(row, '-')[1]].strip(' -')
 
@@ -76,16 +85,55 @@ class Data:
                 self.campaigners.append(campaigner)
                 self.audiences.append(audience)
 
-        tuple = self.companies, self.campaigners, self.audiences, "{0:.2f}".format(self.impressions), "{0:.2f}".format(self.spent)
+
+                # self.actions.append(self.action[i])
+                self.actions += int(self.action[i - 1])
+                self.start_dates.append(self.start_date[i - 1])
+
+
+        # Number of rows in column for debugging
+        # print('Actions: ' + str(len(self.action)))
+        # print('Reach: ' + str(len(self.reach)))
+        # print('Start Date: ' + str(len(self.start_date)))
+        #
+        # print('Companies: ' + str(len(self.companies)))
+        # print('Campaigner: ' + str(len(self.campaigners)))
+        # print('Audiences: ' + str(len(self.audiences)))
+
+        self.cpi = int(self.spent / self.actions)
+        self.starts = int(len(set(self.start_dates)))
+        self.cps = int(self.spent / self.starts)
+        self.dltostart = int(self.spent / self.actions)
+
+
+        def get_impressions():
+            pass
+
+        tuple = self.companies, self.campaigners, self.audiences, "{0:.2f}".format(self.impressions), \
+                "{0:.2f}".format(self.spent), self.actions, self.cpi, self.starts, self.cps, self.dltostart
 
         return list(tuple)
 
-    def get_impressions(self):
-        return self.device(self)
 
 if __name__ == "__main__":
 
     nyt = Data('gdata.csv')
-    print(nyt.device('IPHONE')[3])
+    device = 'IPHONE'
 
-    print(nyt.get_impressions())
+    impressions = nyt.device(device)[3]
+    spend = nyt.device(device)[4]
+    actions = nyt.device(device)[5]
+    cpi = nyt.device(device)[6]
+    starts = nyt.device(device)[7]
+    cps = nyt.device(device)[8]
+    dltostart = nyt.device(device)[9]
+
+
+    print(actions)
+    print(impressions)
+    print(spend)
+    print(actions)
+    print(cpi)
+    print(starts)
+    print(cps)
+    print(dltostart)
