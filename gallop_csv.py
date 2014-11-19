@@ -1,13 +1,12 @@
-''''
-  ________       .__  .__                 _________            .__        __
- /  _____/_____  |  | |  |   ____ ______ /   _____/ ___________|__|______/  |_  ______
-/   \  ___\__  \ |  | |  |  /  _ \\____ \\_____  \_/ ___\_  __ \  \____ \   __\/  ___/
-\    \_\  \/ __ \|  |_|  |_(  <_> )  |_> >        \  \___|  | \/  |  |_> >  |  \___ \
- \______  (____  /____/____/\____/|   __/_______  /\___  >__|  |__|   __/|__| /____  >
-        \/     \/                 |__|          \/     \/         |__|             \/
--- Gallop CSV
-- Andy Fang
-'''
+#   ________       .__  .__                 _________            .__        __
+#  /  _____/_____  |  | |  |   ____ ______ /   _____/ ___________|__|______/  |_  ______
+# /   \  ___\__  \ |  | |  |  /  _ \\____ \\_____  \_/ ___\_  __ \  \____ \   __\/  ___/
+# \    \_\  \/ __ \|  |_|  |_(  <_> )  |_> >        \  \___|  | \/  |  |_> >  |  \___ \
+#  \______  (____  /____/____/\____/|   __/_______  /\___  >__|  |__|   __/|__| /____  >
+#         \/     \/                 |__|          \/     \/         |__|             \/
+# -- Gallop CSV
+# - Andy Fang
+
 
 import csv
 from collections import defaultdict
@@ -42,43 +41,43 @@ class Data:
         return [i for i, letter in enumerate(s) if letter == ch]
 
     def device(self, device):
-            """
-            Returns a list of all the values needed to organize Gallop data.
-            :param device: this is the case insensitive name of the device to search for. All other returned values are in the
-            same
-            row as
-            the device.
-            :return: List of companies, campaigners, audiences, impressions
-            """
+        """
+        Returns a list of all the values needed to organize Gallop data.
+        :param device: this is the case insensitive name of the device to search for. All other returned values are in the
+        same
+        row as
+        the device.
+        :return: List of companies, campaigners, audiences, impressions
+        """
 
-            i = 0
-            self.rows = []
-            self.companies = []
-            self.campaigners = []
-            self.audiences = []
-            self.impressions = 0
-            self.total_dl = 0
-            self.spent = 0
+        i = 0
+        self.rows = []
+        self.companies = []
+        self.campaigners = []
+        self.audiences = []
+        self.impressions = 0
+        self.total_dl = 0
+        self.spent = 0
 
-            for row in self.campaign_name:
-                audience = row[self.occurences(row, '-')[1]:self.occurences(row, '-')[2]].strip(' -') # filters by
-                # audience
-                i += 1 # Index of the matching row to audience
+        for row in self.campaign_name:
+            audience = row[self.occurences(row, '-')[1]:self.occurences(row, '-')[2]].strip(' -') # filters by
+            # audience
+            i += 1 # Index of the matching row to audience
 
-                if audience.lower() == device.lower():
-                    company = row[:self.occurences(row, '-')[0]].strip()
-                    campaigner = row[self.occurences(row, '-')[0]:self.occurences(row, '-')[1]].strip(' -')
-                    self.impressions += float(self.column['Impressions'][i - 1])
-                    # total_dl += int(column['Total Downloads'])
-                    self.spent += float(self.column['Amount Spent (USD)'][i - 1])
+            if audience.lower() == device.lower():
+                company = row[:self.occurences(row, '-')[0]].strip()
+                campaigner = row[self.occurences(row, '-')[0]:self.occurences(row, '-')[1]].strip(' -')
+                self.impressions += float(self.column['Impressions'][i - 1])
+                # total_dl += int(column['Total Downloads'])
+                self.spent += float(self.column['Amount Spent (USD)'][i - 1])
 
-                    self.companies.append(company)
-                    self.campaigners.append(campaigner)
-                    self.audiences.append(audience)
+                self.companies.append(company)
+                self.campaigners.append(campaigner)
+                self.audiences.append(audience)
 
-            tuple = self.companies, self.campaigners, self.audiences, "{0:.2f}".format(self.impressions), "{0:.2f}".format(self.spent)
+        tuple = self.companies, self.campaigners, self.audiences, "{0:.2f}".format(self.impressions), "{0:.2f}".format(self.spent)
 
-            return list(tuple)
+        return list(tuple)
 
 if __name__ == "__main__":
 
