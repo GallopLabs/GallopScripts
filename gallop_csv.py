@@ -15,24 +15,24 @@ from collections import defaultdict
 
 class Data:
 
+    column = defaultdict(list)  # each value in each column is appended to a list
+
     def __init__(self, file):
 
         data = open(file)
-        column = defaultdict(list) # each value in each column is appended to a list
 
         with data as f:
-            reader = csv.DictReader(f) # read rows into a dictionary format
+            reader = csv.DictReader(f)  # read rows into a dictionary format
             for row in reader: # read a row as {column1: value1, column2: value2,...}
-                for (k, v) in row.items(): # go over each column name and value
-                    column[k].append(v) # append the value into the appropriate list
-                                         # based on column name k
+                for (k, v) in row.items():  # go over each column name and value
+                    self.column[k].append(v)  # append the value into the appropriate list based on column number k
 
-        self.campaign_name = column['Campaign Name']
-        self.start_date = column['Start Date']
-        self.end_date = column['End Date']
-        self.reach = column['Reach']
+        self.campaign_name = self.column['Campaign Name']
+        self.start_date = self.column['Start Date']
+        self.end_date = self.column['End Date']
+        self.reach = self.column['Reach']
 
-    def occurences(s, ch):
+    def occurences(self, s, ch):
         """
         Gets all the occurences of a string in a string.
         :param s: The string to look in.
@@ -41,10 +41,7 @@ class Data:
         """
         return [i for i, letter in enumerate(s) if letter == ch]
 
-
-class Device:
-
-    def __init__(self, data, device):
+    def device(self, device):
             """
             Returns a list of all the values needed to organize Gallop data.
             :param device: this is the case insensitive name of the device to search for. All other returned values are in the
@@ -54,9 +51,8 @@ class Device:
             :return: List of companies, campaigners, audiences, impressions
             """
 
-
-            self.rows = []
             i = 0
+            self.rows = []
             self.companies = []
             self.campaigners = []
             self.audiences = []
@@ -64,17 +60,17 @@ class Device:
             self.total_dl = 0
             self.spent = 0
 
-            for row in data.campaign_name:
-                audience = row[data.occurences(row, '-')[1]:data.occurences(row, '-')[2]].strip(' -') # filters by
+            for row in self.campaign_name:
+                audience = row[self.occurences(row, '-')[1]:self.occurences(row, '-')[2]].strip(' -') # filters by
                 # audience
                 i += 1 # Index of the matching row to audience
 
                 if audience.lower() == device.lower():
-                    company = row[:data.occurences(row, '-')[0]].strip()
-                    campaigner = row[data.occurences(row, '-')[0]:data.occurences(row, '-')[1]].strip(' -')
-                    self.impressions += float(data.column['Impressions'][i - 1])
+                    company = row[:self.occurences(row, '-')[0]].strip()
+                    campaigner = row[self.occurences(row, '-')[0]:self.occurences(row, '-')[1]].strip(' -')
+                    self.impressions += float(self.column['Impressions'][i - 1])
                     # total_dl += int(column['Total Downloads'])
-                    self.spent += float(data.column['Amount Spent (USD)'][i - 1])
+                    self.spent += float(self.column['Amount Spent (USD)'][i - 1])
 
                     self.companies.append(company)
                     self.campaigners.append(campaigner)
@@ -85,9 +81,5 @@ class Device:
             return list(tuple)
 
 
-if __name__ == 'main':
-
-    nyt = Data('gdata.csv')
-    Iphone = Device(nyt, 'IPHONE')
-
-    print(Iphone)
+nyt = Data('gdata.csv')
+print(nyt.device('IPHONE'))
