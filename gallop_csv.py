@@ -13,6 +13,7 @@ import csv
 from collections import defaultdict
 
 
+
 class Data:
 
     column = defaultdict(list)  # each value in each column is appended to a list
@@ -103,10 +104,21 @@ class Data:
         # print('Campaigner: ' + str(len(self.campaigners)))
         # print('Audiences: ' + str(len(self.audiences)))
 
-        self.cpi = int(self.spent / self.actions)
+
+        if self.spent == 0 or self.actions == 0:
+            self.cpi = 0
+        else:
+            self.cpi = int(self.spent / self.actions)
+
         self.starts = int(len(set(self.start_dates)))
-        self.cps = int(self.spent / self.starts)
-        self.dltostart = int(self.spent / self.actions)
+        if self.spent == 0 or self.starts == 0:
+            self.cps = int(self.spent / self.starts)
+        else:
+            self.cps = 0
+        if self.spent == 0 or self.actions == 0:
+            self.dltostart = int(self.spent / self.actions)
+        else:
+            self.dltostart = 0
 
 
         tuple = str(self.companies), str(self.campaigners), str(self.audiences), str("{0:.2f}".format(
@@ -121,8 +133,8 @@ class Data:
 if __name__ == "__main__":
 
     data = Data('gdata.csv')
-    output = open('output.py', 'w+')
 
+    output = open('output.csv', 'w+')
     def write_row(device):
         # Grab values
         impressions = data.device(device)[3]
@@ -136,9 +148,13 @@ if __name__ == "__main__":
         row = [device, impressions, downloads, spend, cpi, starts, cps, dltostart]
 
         sep = ','
+        last = len(row)
+        i = 0
         for cell in row:
-            if cell == cell[-1]:
+            i += 1
+            if i == last:
                 sep = "\n"
+                # import pdb;pdb.set_trace()
             output.write(cell + sep)
 
 
@@ -150,3 +166,5 @@ if __name__ == "__main__":
         output.write(title + sep)
 
     write_row('IPHONE')
+    write_row('IPAD')
+    write_row('ANDROID')
