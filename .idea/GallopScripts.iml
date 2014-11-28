@@ -5,6 +5,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="starer" />
+    <orderEntry type="module" module-name="rogerbot" />
   </component>
 </module>
 

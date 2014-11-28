@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/GallopScripts.iml" filepath="$PROJECT_DIR$/.idea/GallopScripts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../rogerbot/.idea/rogerbot.iml" filepath="$PROJECT_DIR$/../rogerbot/.idea/rogerbot.iml" />
       <module fileurl="file://$PROJECT_DIR$/../octoplus/.idea/starer.iml" filepath="$PROJECT_DIR$/../octoplus/.idea/starer.iml" />
     </modules>
   </component>

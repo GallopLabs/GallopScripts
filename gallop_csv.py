@@ -7,8 +7,6 @@
         \/     \/                 |__|          \/     \/         |__|             \/
 -- Gallop CSV
 - Andy Fang
-
-Currently does not output anything. However, once the values are accurate I will enable writing.
 '''
 
 import csv
@@ -67,6 +65,7 @@ class Data:
         self.actions = 0
         self.starts = []
         self.start_dates = []
+        self.downloads = 0
 
         for row in self.campaign_name:
             audience = row[self.occurences(row, '-')[1]:self.occurences(row, '-')[2]].strip(' -') # filters by
@@ -87,6 +86,7 @@ class Data:
                 self.companies.append(company)
                 self.campaigners.append(campaigner)
                 self.audiences.append(audience)
+                self.downloads += float(self.column['Actions'][i - 1])
 
 
                 # self.actions.append(self.action[i])
@@ -109,34 +109,44 @@ class Data:
         self.dltostart = int(self.spent / self.actions)
 
 
-        def get_impressions():
-            pass
-
-        tuple = self.companies, self.campaigners, self.audiences, "{0:.2f}".format(self.impressions), \
-                "{0:.2f}".format(self.spent), self.actions, self.cpi, self.starts, self.cps, self.dltostart
+        tuple = str(self.companies), str(self.campaigners), str(self.audiences), str("{0:.2f}".format(
+            self.impressions)), \
+                "{0:.2f}".format(self.spent), str(self.actions), str(self.cpi), str(self.starts), str(self.cps), \
+                str(self.dltostart), \
+                str(self.downloads)
 
         return list(tuple)
 
 
 if __name__ == "__main__":
 
-    nyt = Data('gdata.csv')
-    device = 'IPHONE'
+    data = Data('gdata.csv')
+    output = open('output.py', 'w+')
 
-    impressions = nyt.device(device)[3]
-    spend = nyt.device(device)[4]
-    actions = nyt.device(device)[5]
-    cpi = nyt.device(device)[6]
-    starts = nyt.device(device)[7]
-    cps = nyt.device(device)[8]
-    dltostart = nyt.device(device)[9]
+    def write_row(device):
+        # Grab values
+        impressions = data.device(device)[3]
+        spend = data.device(device)[4]
+        actions = data.device(device)[5]
+        cpi = data.device(device)[6]
+        starts = data.device(device)[7]
+        cps = data.device(device)[8]
+        dltostart = data.device(device)[9]
+        downloads = data.device(device)[10]
+        row = [device, impressions, downloads, spend, cpi, starts, cps, dltostart]
+
+        sep = ','
+        for cell in row:
+            if cell == cell[-1]:
+                sep = "\n"
+            output.write(cell + sep)
 
 
-    print(actions)
-    print(impressions)
-    print(spend)
-    print(actions)
-    print(cpi)
-    print(starts)
-    print(cps)
-    print(dltostart)
+    titles = ['Summary', 'Impressions', 'Total Downloads', 'Spend', 'CPI', 'Starts', 'CPS', 'Download to Start Conversion %']
+    sep = ','
+    for title in titles:
+        if title == titles[-1]:
+            sep = "\n"
+        output.write(title + sep)
+
+    write_row('IPHONE')
