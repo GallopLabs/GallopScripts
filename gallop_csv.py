@@ -105,36 +105,39 @@ class Data:
         # print('Audiences: ' + str(len(self.audiences)))
 
 
-        if self.spent == 0 or self.actions == 0:
-            self.cpi = 0
+        if self.spent > 0 and self.actions > 0:
+
+            self.cpi = float(self.spent) / float(self.actions)
+            # import pdb;pdb.set_trace()
+
         else:
-            self.cpi = int(self.spent / self.actions)
+            self.cpi = 0
 
         self.starts = int(len(set(self.start_dates)))
-        if self.spent == 0 or self.starts == 0:
-            self.cps = int(self.spent / self.starts)
+
+        if self.spent > 0 and self.starts > 0:
+            self.cps = float(self.spent) / float(self.starts)
         else:
             self.cps = 0
-        if self.spent == 0 or self.actions == 0:
-            self.dltostart = int(self.spent / self.actions)
+
+        if self.spent > 0 and self.actions > 0:
+            self.dltostart = float(self.spent) / float(self.actions)
         else:
             self.dltostart = 0
 
-
         tuple = str(self.companies), str(self.campaigners), str(self.audiences), str("{0:.2f}".format(
             self.impressions)), \
-                "{0:.2f}".format(self.spent), str(self.actions), str(self.cpi), str(self.starts), str(self.cps), \
+                str(self.spent), str(self.actions), str(self.cpi), str(self.starts), str(self.cps), \
                 str(self.dltostart), \
                 str(self.downloads)
 
         return list(tuple)
 
-
 if __name__ == "__main__":
 
     data = Data('gdata.csv')
-
     output = open('output.csv', 'w+')
+
     def write_row(device):
         # Grab values
         impressions = data.device(device)[3]
@@ -154,7 +157,7 @@ if __name__ == "__main__":
             i += 1
             if i == last:
                 sep = "\n"
-                # import pdb;pdb.set_trace()
+
             output.write(cell + sep)
 
 
